@@ -1,6 +1,6 @@
 services:
   pg:
-    image: postgres:14.20-trixie
+    image: postgres:14.20-trixie@sha256:062b02051873a101837543675b5b4601cba06b1972d22f4b7969adbde5a280e4
     environment:
       POSTGRES_PASSWORD: postgres
     command: ["postgres", "-c", "max_connections=400"]

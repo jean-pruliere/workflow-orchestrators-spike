@@ -7,7 +7,8 @@ const stepService = (name: string) =>
   restate.service({
     name,
     handlers: {
-      advance: async (ctx: restate.Context, input: StepIn) => ctx.run("advance", () => step(input)),
+      advance: async (ctx: restate.Context, input: StepIn) =>
+        ctx.run("advance", () => step(input), { maxRetryAttempts: 5, initialRetryInterval: 1000, retryIntervalFactor: 1 }),
     },
   });
 

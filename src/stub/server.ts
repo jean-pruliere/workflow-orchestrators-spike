@@ -20,15 +20,21 @@ createServer((req, res) => {
     return;
   }
   if (url.pathname === "/stats") {
+    const prefix = url.searchParams.get("prefix") ?? "";
+    let matched = 0;
+    let keys = 0;
     let dupKeys = 0;
     let dupCalls = 0;
-    for (const c of counts.values()) {
+    for (const [key, c] of counts) {
+      if (!key.startsWith(prefix)) continue;
+      keys++;
+      matched += c;
       if (c > 1) {
         dupKeys++;
         dupCalls += c - 1;
       }
     }
-    json(res, { calls, keys: counts.size, dupKeys, dupCalls });
+    json(res, { calls: prefix ? matched : calls, keys, dupKeys, dupCalls });
     return;
   }
   if (url.pathname === "/reset" && req.method === "POST") {

@@ -53,7 +53,7 @@ const wallMs = Date.now() - startedAt;
 
 await new Promise(resolve => setTimeout(resolve, 1000));
 const pg = pgUrl && pgBefore ? await diff(pgUrl, pgBefore) : undefined;
-const stub = JSON.parse((await get(`${stubUrl}/stats`)).text) as {
+const stub = JSON.parse((await get(`${stubUrl}/stats?prefix=${encodeURIComponent(runId)}`)).text) as {
   calls: number;
   dupKeys: number;
   dupCalls: number;
@@ -100,7 +100,9 @@ const summary = {
 };
 
 console.log(JSON.stringify(summary, null, 2));
-await mkdir("results", { recursive: true });
-await appendFile("results/runs.jsonl", `${JSON.stringify(summary)}\n`);
+if (process.env.RECORD !== "0") {
+  await mkdir("results", { recursive: true });
+  await appendFile("results/runs.jsonl", `${JSON.stringify(summary)}\n`);
+}
 await adapter.close();
 process.exit(summary.ok ? 0 : 1);

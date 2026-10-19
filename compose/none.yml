@@ -8,16 +8,20 @@ x-app: &app
   init: true
   command: ["node", "src/engines/none/main.ts"]
 
+x-env: &env
+  STUB_URL: http://stub:8080
+  STEP_DELAY_MS: ${STEP_DELAY_MS:-0}
+
 services:
   a:
     <<: *app
-    environment: { ROLE: a, STUB_URL: http://stub:8080 }
+    environment: { <<: *env, ROLE: a }
   b:
     <<: *app
-    environment: { ROLE: b, STUB_URL: http://stub:8080 }
+    environment: { <<: *env, ROLE: b }
   c:
     <<: *app
-    environment: { ROLE: c, STUB_URL: http://stub:8080 }
+    environment: { <<: *env, ROLE: c }
   driver:
     image: wos-app:dev
     init: true

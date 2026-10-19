@@ -15,6 +15,7 @@ x-env: &env
   STUB_URL: http://stub:8080
   PG_URL: postgres://postgres:postgres@pg:5432/postgres
   POLL_MS: ${POLL_MS:-5000}
+  STEP_DELAY_MS: ${STEP_DELAY_MS:-0}
 
 services:
   a:

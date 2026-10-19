@@ -27,9 +27,18 @@ if (role === "a") {
     { name: "chain" },
   );
 } else {
-  DBOS.registerWorkflow(async (input: StepIn) => DBOS.runStep(() => step(input), { name: "advance" }), {
-    name: "advance",
-  });
+  DBOS.registerWorkflow(
+    async (input: StepIn) =>
+      DBOS.runStep(() => step(input), {
+        name: "advance",
+        retriesAllowed: true,
+        maxAttempts: 5,
+        intervalSeconds: 1,
+        backoffRate: 1,
+        timeoutMS: 10_000,
+      }),
+    { name: "advance" },
+  );
 }
 
 await DBOS.launch();

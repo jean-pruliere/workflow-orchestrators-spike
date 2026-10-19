@@ -8,20 +8,24 @@ x-app: &app
   init: true
   command: ["node", "src/engines/restate/main.ts"]
 
+x-env: &env
+  STUB_URL: http://stub:8080
+  STEP_DELAY_MS: ${STEP_DELAY_MS:-0}
+
 services:
   restate:
-    image: docker.restate.dev/restatedev/restate:1.8.0
+    image: docker.restate.dev/restatedev/restate:1.8.0@sha256:2614a4e3a2102ef0cd4733e324574ee29a77e19e7e29262fa5660c9c55df70e5
     environment:
       RESTATE_NODE_NAME: restate-1
   a:
     <<: *app
-    environment: { ROLE: a, STUB_URL: http://stub:8080 }
+    environment: { <<: *env, ROLE: a }
   b:
     <<: *app
-    environment: { ROLE: b, STUB_URL: http://stub:8080 }
+    environment: { <<: *env, ROLE: b }
   c:
     <<: *app
-    environment: { ROLE: c, STUB_URL: http://stub:8080 }
+    environment: { <<: *env, ROLE: c }
   restate-register:
     image: wos-app:dev
     init: true
