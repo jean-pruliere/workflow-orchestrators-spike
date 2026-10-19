@@ -1,0 +1,54 @@
+name: wos-temporal
+
+include:
+  - stub.yml
+  - pg.yml
+
+x-app: &app
+  image: wos-app:dev
+  init: true
+  restart: on-failure
+  command: ["node", "src/engines/temporal/main.ts"]
+  depends_on:
+    temporal-namespace: { condition: service_completed_successfully }
+
+x-env: &env
+  STUB_URL: http://stub:8080
+  TEMPORAL_ADDRESS: temporal:7233
+  TEMPORAL_NAMESPACE: bench
+
+services:
+  temporal-schema:
+    image: temporalio/admin-tools:1.32.1
+    depends_on:
+      pg: { condition: service_healthy }
+    entrypoint: ["sh", "/setup/schema.sh"]
+    volumes: ["./temporal:/setup:ro"]
+  temporal:
+    image: temporalio/server:1.32.1
+    depends_on:
+      temporal-schema: { condition: service_completed_successfully }
+    environment:
+      TEMPORAL_SERVER_CONFIG_FILE_PATH: /setup/config.yaml
+    volumes: ["./temporal:/setup:ro"]
+  temporal-namespace:
+    image: temporalio/admin-tools:1.32.1
+    depends_on: [temporal]
+    entrypoint: ["sh", "/setup/namespace.sh"]
+    volumes: ["./temporal:/setup:ro"]
+  a:
+    <<: *app
+    environment: { <<: *env, ROLE: a }
+  b:
+    <<: *app
+    environment: { <<: *env, ROLE: b }
+  c:
+    <<: *app
+    environment: { <<: *env, ROLE: c }
+  driver:
+    image: wos-app:dev
+    init: true
+    profiles: [driver]
+    command: ["node", "src/driver/run.ts"]
+    environment: { <<: *env, ENGINE: temporal, PG_URL: postgres://postgres:postgres@pg:5432/postgres }
+    volumes: ["../results:/app/results"]

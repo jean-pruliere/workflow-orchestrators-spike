@@ -1,0 +1,35 @@
+name: wos-naive
+
+include:
+  - stub.yml
+  - pg.yml
+
+x-app: &app
+  image: wos-app:dev
+  init: true
+  command: ["node", "src/engines/naive/main.ts"]
+  depends_on:
+    pg: { condition: service_healthy }
+
+x-env: &env
+  STUB_URL: http://stub:8080
+  PG_URL: postgres://postgres:postgres@pg:5432/postgres
+  POLL_MS: ${POLL_MS:-5000}
+
+services:
+  a:
+    <<: *app
+    environment: { <<: *env, ROLE: a }
+  b:
+    <<: *app
+    environment: { <<: *env, ROLE: b }
+  c:
+    <<: *app
+    environment: { <<: *env, ROLE: c }
+  driver:
+    image: wos-app:dev
+    init: true
+    profiles: [driver]
+    command: ["node", "src/driver/run.ts"]
+    environment: { <<: *env, ENGINE: naive }
+    volumes: ["../results:/app/results"]

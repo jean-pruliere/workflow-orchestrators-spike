@@ -1,0 +1,37 @@
+name: wos-restate
+
+include:
+  - stub.yml
+
+x-app: &app
+  image: wos-app:dev
+  init: true
+  command: ["node", "src/engines/restate/main.ts"]
+
+services:
+  restate:
+    image: docker.restate.dev/restatedev/restate:1.8.0
+    environment:
+      RESTATE_NODE_NAME: restate-1
+  a:
+    <<: *app
+    environment: { ROLE: a, STUB_URL: http://stub:8080 }
+  b:
+    <<: *app
+    environment: { ROLE: b, STUB_URL: http://stub:8080 }
+  c:
+    <<: *app
+    environment: { ROLE: c, STUB_URL: http://stub:8080 }
+  restate-register:
+    image: wos-app:dev
+    init: true
+    depends_on: [restate, a, b, c]
+    command: ["node", "src/engines/restate/register.ts"]
+    environment: { RESTATE_ADMIN: http://restate:9070 }
+  driver:
+    image: wos-app:dev
+    init: true
+    profiles: [driver]
+    command: ["node", "src/driver/run.ts"]
+    environment: { ENGINE: restate, STUB_URL: http://stub:8080, RESTATE_INGRESS: http://restate:8080 }
+    volumes: ["../results:/app/results"]

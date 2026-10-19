@@ -1,0 +1,27 @@
+name: wos-none
+
+include:
+  - stub.yml
+
+x-app: &app
+  image: wos-app:dev
+  init: true
+  command: ["node", "src/engines/none/main.ts"]
+
+services:
+  a:
+    <<: *app
+    environment: { ROLE: a, STUB_URL: http://stub:8080 }
+  b:
+    <<: *app
+    environment: { ROLE: b, STUB_URL: http://stub:8080 }
+  c:
+    <<: *app
+    environment: { ROLE: c, STUB_URL: http://stub:8080 }
+  driver:
+    image: wos-app:dev
+    init: true
+    profiles: [driver]
+    command: ["node", "src/driver/run.ts"]
+    environment: { ENGINE: none, STUB_URL: http://stub:8080 }
+    volumes: ["../results:/app/results"]

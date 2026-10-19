@@ -1,0 +1,37 @@
+name: wos-dbos
+
+include:
+  - stub.yml
+  - pg.yml
+
+x-app: &app
+  image: wos-app:dev
+  init: true
+  restart: on-failure
+  command: ["node", "src/engines/dbos/main.ts"]
+  depends_on:
+    pg: { condition: service_healthy }
+
+x-env: &env
+  STUB_URL: http://stub:8080
+  DBOS_SYSTEM_DATABASE_URL: postgres://postgres:postgres@pg:5432/dbos_sys
+  DBOS_QUEUE_POLL_MS: ${DBOS_QUEUE_POLL_MS:-}
+  DBOS_RESULT_POLL_MS: ${DBOS_RESULT_POLL_MS:-}
+
+services:
+  a:
+    <<: *app
+    environment: { <<: *env, ROLE: a, DBOS_EXECUTOR_ID: a-0 }
+  b:
+    <<: *app
+    environment: { <<: *env, ROLE: b, DBOS_EXECUTOR_ID: b-0 }
+  c:
+    <<: *app
+    environment: { <<: *env, ROLE: c, DBOS_EXECUTOR_ID: c-0 }
+  driver:
+    image: wos-app:dev
+    init: true
+    profiles: [driver]
+    command: ["node", "src/driver/run.ts"]
+    environment: { <<: *env, ENGINE: dbos, PG_URL: postgres://postgres:postgres@pg:5432/postgres }
+    volumes: ["../results:/app/results"]

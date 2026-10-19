@@ -1,0 +1,5 @@
+services:
+  stub:
+    image: wos-app:dev
+    init: true
+    command: ["node", "src/stub/server.ts"]
