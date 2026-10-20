@@ -65,12 +65,14 @@ const stub = JSON.parse((await get(`${stubUrl}/stats?prefix=${encodeURIComponent
 
 const perChain = new Array<number>(n).fill(-1);
 const latencies: number[] = [];
+const stepLatencies: number[] = [];
 const errors: string[] = [];
 let messages = 0;
 for (const result of settled) {
   if (result.status === "fulfilled") {
     perChain[result.value.i] = result.value.s;
     latencies.push(result.value.latencyMs);
+    stepLatencies.push(result.value.latencyMs / Math.max(1, result.value.n));
     messages += result.value.n;
   } else {
     errors.push(String(result.reason).slice(0, 300));
@@ -99,6 +101,7 @@ const summary = {
   wallMs,
   stepsPerSec: Math.round((messages / wallMs) * 1000 * 10) / 10,
   latencyMs: quantiles(latencies),
+  stepLatencyMs: quantiles(stepLatencies),
   pg: pg && { ...pg, walBytesPerStep: messages > 0 ? Math.round(pg.walBytes / messages) : null },
   errors: [...new Set(errors)].slice(0, 5),
 };
