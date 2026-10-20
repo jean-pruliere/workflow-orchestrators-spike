@@ -1,0 +1,51 @@
+{
+  "at": "2026-10-20T07:37:20.039Z",
+  "engine": "temporal",
+  "label": "perf-temporal-50-1792481534",
+  "runId": "temporal-mvgd9agb",
+  "params": {
+    "seed": 1,
+    "n": 31,
+    "bits": 41,
+    "k": 1,
+    "staggerMs": 5846
+  },
+  "expected": {
+    "messages": 9287,
+    "calls": 1250,
+    "checksum": "2d3d80cac26ab319"
+  },
+  "got": {
+    "completed": 31,
+    "failed": 0,
+    "messages": 9287,
+    "checksum": "2d3d80cac26ab319",
+    "stubCalls": 1250,
+    "dupKeys": 0,
+    "dupCalls": 0
+  },
+  "ok": true,
+  "wallMs": 249208,
+  "stepsPerSec": 37.3,
+  "latencyMs": {
+    "p50": 25675,
+    "p95": 48410,
+    "p99": 73824,
+    "max": 73824
+  },
+  "stepLatencyMs": {
+    "p50": 96.52255639097744,
+    "p95": 98.1947261663286,
+    "p99": 98.95978552278821,
+    "max": 98.95978552278821
+  },
+  "pg": {
+    "walBytes": 115609784,
+    "commits": 164275,
+    "inserted": 84295,
+    "updated": 84247,
+    "deleted": 54626,
+    "walBytesPerStep": 12449
+  },
+  "errors": []
+}

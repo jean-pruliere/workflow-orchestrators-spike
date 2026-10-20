@@ -1,0 +1,51 @@
+{
+  "at": "2026-10-20T08:01:12.737Z",
+  "engine": "naive",
+  "label": "perf-naive-500-1792482957",
+  "runId": "naive-mvge3p5c",
+  "params": {
+    "seed": 1,
+    "n": 308,
+    "bits": 41,
+    "k": 1,
+    "staggerMs": 585
+  },
+  "expected": {
+    "messages": 91598,
+    "calls": 12823,
+    "checksum": "84cc0e901aca1de9"
+  },
+  "got": {
+    "completed": 308,
+    "failed": 0,
+    "messages": 91598,
+    "checksum": "84cc0e901aca1de9",
+    "stubCalls": 12823,
+    "dupKeys": 0,
+    "dupCalls": 0
+  },
+  "ok": true,
+  "wallMs": 263162,
+  "stepsPerSec": 348.1,
+  "latencyMs": {
+    "p50": 57561,
+    "p95": 90337,
+    "p99": 103828,
+    "max": 149943
+  },
+  "stepLatencyMs": {
+    "p50": 201.30128205128204,
+    "p95": 203.1676646706587,
+    "p99": 203.95808383233532,
+    "max": 204.30625
+  },
+  "pg": {
+    "walBytes": 292602096,
+    "commits": 208708,
+    "inserted": 183832,
+    "updated": 367358,
+    "deleted": 9,
+    "walBytesPerStep": 3194
+  },
+  "errors": []
+}

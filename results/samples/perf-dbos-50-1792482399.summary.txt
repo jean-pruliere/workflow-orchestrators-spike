@@ -1,0 +1,51 @@
+{
+  "at": "2026-10-20T07:51:54.077Z",
+  "engine": "dbos",
+  "label": "perf-dbos-50-1792482399",
+  "runId": "dbos-mvgdrtai",
+  "params": {
+    "seed": 1,
+    "n": 31,
+    "bits": 41,
+    "k": 1,
+    "staggerMs": 5846
+  },
+  "expected": {
+    "messages": 9287,
+    "calls": 1250,
+    "checksum": "2d3d80cac26ab319"
+  },
+  "got": {
+    "completed": 31,
+    "failed": 0,
+    "messages": 9287,
+    "checksum": "2d3d80cac26ab319",
+    "stubCalls": 1250,
+    "dupKeys": 0,
+    "dupCalls": 0
+  },
+  "ok": true,
+  "wallMs": 259012,
+  "stepsPerSec": 35.9,
+  "latencyMs": {
+    "p50": 29810,
+    "p95": 60116,
+    "p99": 83632,
+    "max": 83632
+  },
+  "stepLatencyMs": {
+    "p50": 117.65460526315789,
+    "p95": 123.23809523809524,
+    "p99": 134.17919075144508,
+    "max": 134.17919075144508
+  },
+  "pg": {
+    "walBytes": 46058560,
+    "commits": 176190,
+    "inserted": 55894,
+    "updated": 18882,
+    "deleted": 22,
+    "walBytesPerStep": 4959
+  },
+  "errors": []
+}

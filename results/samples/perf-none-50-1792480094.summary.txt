@@ -1,0 +1,43 @@
+{
+  "at": "2026-10-20T07:11:59.357Z",
+  "engine": "none",
+  "label": "perf-none-50-1792480094",
+  "runId": "none-mvgce9z7",
+  "params": {
+    "seed": 1,
+    "n": 31,
+    "bits": 41,
+    "k": 1,
+    "staggerMs": 5846
+  },
+  "expected": {
+    "messages": 9287,
+    "calls": 1250,
+    "checksum": "2d3d80cac26ab319"
+  },
+  "got": {
+    "completed": 31,
+    "failed": 0,
+    "messages": 9287,
+    "checksum": "2d3d80cac26ab319",
+    "stubCalls": 1250,
+    "dupKeys": 0,
+    "dupCalls": 0
+  },
+  "ok": true,
+  "wallMs": 175496,
+  "stepsPerSec": 52.9,
+  "latencyMs": {
+    "p50": 55,
+    "p95": 127,
+    "p99": 224,
+    "max": 224
+  },
+  "stepLatencyMs": {
+    "p50": 0.2015810276679842,
+    "p95": 0.36666666666666664,
+    "p99": 0.8421052631578947,
+    "max": 0.8421052631578947
+  },
+  "errors": []
+}

@@ -1,0 +1,51 @@
+{
+  "at": "2026-10-20T08:10:02.702Z",
+  "engine": "dbos",
+  "label": "perf-dbos-500-1792483513",
+  "runId": "dbos-mvgefone",
+  "params": {
+    "seed": 1,
+    "n": 308,
+    "bits": 41,
+    "k": 1,
+    "staggerMs": 585
+  },
+  "expected": {
+    "messages": 91598,
+    "calls": 12823,
+    "checksum": "84cc0e901aca1de9"
+  },
+  "got": {
+    "completed": 308,
+    "failed": 0,
+    "messages": 91598,
+    "checksum": "84cc0e901aca1de9",
+    "stubCalls": 12823,
+    "dupKeys": 0,
+    "dupCalls": 0
+  },
+  "ok": true,
+  "wallMs": 233906,
+  "stepsPerSec": 391.6,
+  "latencyMs": {
+    "p50": 35341,
+    "p95": 55547,
+    "p99": 63516,
+    "max": 92337
+  },
+  "stepLatencyMs": {
+    "p50": 122.41666666666667,
+    "p95": 128.36774193548388,
+    "p99": 130.52742616033754,
+    "max": 134.22767857142858
+  },
+  "pg": {
+    "walBytes": 438476576,
+    "commits": 1618077,
+    "inserted": 550585,
+    "updated": 184001,
+    "deleted": 14,
+    "walBytesPerStep": 4787
+  },
+  "errors": []
+}

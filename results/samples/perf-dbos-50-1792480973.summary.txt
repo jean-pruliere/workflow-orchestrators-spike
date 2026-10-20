@@ -1,0 +1,51 @@
+{
+  "at": "2026-10-20T07:28:10.988Z",
+  "engine": "dbos",
+  "label": "perf-dbos-50-1792480973",
+  "runId": "dbos-mvgcx98m",
+  "params": {
+    "seed": 1,
+    "n": 31,
+    "bits": 41,
+    "k": 1,
+    "staggerMs": 5846
+  },
+  "expected": {
+    "messages": 9287,
+    "calls": 1250,
+    "checksum": "2d3d80cac26ab319"
+  },
+  "got": {
+    "completed": 31,
+    "failed": 0,
+    "messages": 9287,
+    "checksum": "2d3d80cac26ab319",
+    "stubCalls": 1250,
+    "dupKeys": 0,
+    "dupCalls": 0
+  },
+  "ok": true,
+  "wallMs": 261596,
+  "stepsPerSec": 35.5,
+  "latencyMs": {
+    "p50": 31919,
+    "p95": 57547,
+    "p99": 86215,
+    "max": 86215
+  },
+  "stepLatencyMs": {
+    "p50": 119.66066066066067,
+    "p95": 131.0936170212766,
+    "p99": 132.85714285714286,
+    "max": 132.85714285714286
+  },
+  "pg": {
+    "walBytes": 46094648,
+    "commits": 177142,
+    "inserted": 55900,
+    "updated": 18884,
+    "deleted": 22,
+    "walBytesPerStep": 4963
+  },
+  "errors": []
+}

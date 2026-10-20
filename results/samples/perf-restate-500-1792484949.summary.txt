@@ -1,0 +1,43 @@
+{
+  "at": "2026-10-20T08:32:59.585Z",
+  "engine": "restate",
+  "label": "perf-restate-500-1792484949",
+  "runId": "restate-mvgfabgz",
+  "params": {
+    "seed": 1,
+    "n": 308,
+    "bits": 41,
+    "k": 1,
+    "staggerMs": 585
+  },
+  "expected": {
+    "messages": 91598,
+    "calls": 12823,
+    "checksum": "84cc0e901aca1de9"
+  },
+  "got": {
+    "completed": 308,
+    "failed": 0,
+    "messages": 91598,
+    "checksum": "84cc0e901aca1de9",
+    "stubCalls": 12823,
+    "dupKeys": 0,
+    "dupCalls": 0
+  },
+  "ok": true,
+  "wallMs": 181558,
+  "stepsPerSec": 504.5,
+  "latencyMs": {
+    "p50": 2268,
+    "p95": 4131,
+    "p99": 5194,
+    "max": 8366
+  },
+  "stepLatencyMs": {
+    "p50": 7.612244897959184,
+    "p95": 12.273015873015874,
+    "p99": 12.925490196078432,
+    "max": 14.174377224199288
+  },
+  "errors": []
+}
