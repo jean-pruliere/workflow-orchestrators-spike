@@ -18,17 +18,23 @@ x-env: &env
   DBOS_QUEUE_POLL_MS: ${DBOS_QUEUE_POLL_MS:-}
   DBOS_RESULT_POLL_MS: ${DBOS_RESULT_POLL_MS:-}
   STEP_DELAY_MS: ${STEP_DELAY_MS:-0}
+  ENCRYPT: ${ENCRYPT:-0}
+  PAYLOAD_KEY: ${PAYLOAD_KEY:-}
+  MARKER: ${MARKER:-MARKER}
+  WORKFLOW_VERSION: ${WORKFLOW_VERSION:-1}
+  VERSIONING: ${VERSIONING:-none}
+  APP_VERSION: ${APP_VERSION:-}
 
 services:
   a:
     <<: *app
-    environment: { <<: *env, ROLE: a, DBOS_EXECUTOR_ID: "${DBOS_EXECUTOR_ID_A:-a-0}" }
+    environment: { <<: *env, ROLE: a, DBOS_EXECUTOR_ID: "${DBOS_EXECUTOR_ID_A-a-0}" }
   b:
     <<: *app
-    environment: { <<: *env, ROLE: b, DBOS_EXECUTOR_ID: "${DBOS_EXECUTOR_ID_B:-b-0}" }
+    environment: { <<: *env, ROLE: b, DBOS_EXECUTOR_ID: "${DBOS_EXECUTOR_ID_B-b-0}" }
   c:
     <<: *app
-    environment: { <<: *env, ROLE: c, DBOS_EXECUTOR_ID: "${DBOS_EXECUTOR_ID_C:-c-0}" }
+    environment: { <<: *env, ROLE: c, DBOS_EXECUTOR_ID: "${DBOS_EXECUTOR_ID_C-c-0}" }
   driver:
     image: wos-app:dev
     init: true

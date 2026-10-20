@@ -1,6 +1,4 @@
-import type { ChainIn, ChainOut } from "../chain.ts";
-
 export type Adapter = {
-  start(input: ChainIn): Promise<ChainOut>;
+  call<T>(workflow: string, id: string, input: unknown): Promise<T>;
   close(): Promise<void>;
 };

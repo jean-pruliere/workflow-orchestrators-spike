@@ -39,6 +39,23 @@ Driver settings: `SEED`, `N`, `BITS`, `K` (the probe's), `TIMEOUT_MS` per chain,
 JSON line to `results/runs.jsonl`; `ok` is true only when checksum, step count and stub calls match the vectors
 with zero duplicates. No compose project publishes a host port.
 
+## Faults and scenarios
+
+Run from the repo root, on a host kept awake: a host that sleeps mid-run delays every timer and voids the run.
+
+```sh
+scripts/fault-campaign.sh <engine> [fault...]   # fresh stack per fault → results/faults.jsonl
+scripts/scenario.sh <engine> <scenario> [variant]  # → results/scenarios.jsonl
+scripts/scenario-campaign.sh                    # every scenario on temporal, restate, dbos
+```
+
+- Faults: `baseline`, `replace-a`, `replace-b`, `restart-b-same-id` (DBOS only), `kill-engine`, `pause-store-5`,
+  `pause-store-60`, `rolling-restart`, `partition-b`. Chains start 137 ms apart: started together they move in
+  lockstep, and a fault on B then hits every chain or none.
+- Scenarios: `typedError`, `saga`, `timer`, `retry`, `versioned` (variants `patched` / `unversioned` on Temporal and
+  DBOS, `blue-green` / `in-place` on Restate), `sealed` (`default` is the control, `encrypted` uses each engine's hook).
+- Diagnostics: `scripts/dbos-orphans.sh`, `scripts/dbos-replicas.sh`, `scripts/naive-kill.sh`.
+
 ## Before a performance run
 
 - Docker: fixed CPUs and memory for its VM. Stop every other stack, listed first and restored after.

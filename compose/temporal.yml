@@ -17,6 +17,10 @@ x-env: &env
   TEMPORAL_ADDRESS: temporal:7233
   TEMPORAL_NAMESPACE: bench
   STEP_DELAY_MS: ${STEP_DELAY_MS:-0}
+  ENCRYPT: ${ENCRYPT:-0}
+  PAYLOAD_KEY: ${PAYLOAD_KEY:-}
+  MARKER: ${MARKER:-MARKER}
+  WORKFLOWS: ${WORKFLOWS:-workflows}
 
 services:
   temporal-schema:

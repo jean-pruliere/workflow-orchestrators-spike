@@ -11,6 +11,10 @@ x-app: &app
 x-env: &env
   STUB_URL: http://stub:8080
   STEP_DELAY_MS: ${STEP_DELAY_MS:-0}
+  ENCRYPT: ${ENCRYPT:-0}
+  PAYLOAD_KEY: ${PAYLOAD_KEY:-}
+  MARKER: ${MARKER:-MARKER}
+  WORKFLOW_VERSION: ${WORKFLOW_VERSION:-1}
 
 services:
   restate:
@@ -26,16 +30,24 @@ services:
   c:
     <<: *app
     environment: { <<: *env, ROLE: c }
+  a-v2:
+    <<: *app
+    profiles: [v2]
+    environment: { <<: *env, ROLE: a }
   restate-register:
     image: wos-app:dev
     init: true
     depends_on: [restate, a, b, c]
     command: ["node", "src/engines/restate/register.ts"]
-    environment: { RESTATE_ADMIN: http://restate:9070 }
+    environment: { RESTATE_ADMIN: http://restate:9070, TARGETS: "a b c" }
   driver:
     image: wos-app:dev
     init: true
     profiles: [driver]
     command: ["node", "src/driver/run.ts"]
-    environment: { ENGINE: restate, STUB_URL: http://stub:8080, RESTATE_INGRESS: http://restate:8080 }
+    environment:
+      <<: *env
+      ENGINE: restate
+      RESTATE_INGRESS: http://restate:8080
+      RESTATE_ADMIN: http://restate:9070
     volumes: ["../results:/app/results"]

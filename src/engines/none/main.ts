@@ -9,6 +9,7 @@ const role = process.env.ROLE;
 const server = createServer({ requestTimeout: 0, keepAliveTimeout: 30_000 }, async (req, res) => {
   try {
     const body = JSON.parse(await readBody(req));
+    if (role === "a" && req.url !== "/chain") throw new Error(`the no-engine baseline only runs the chain, not ${req.url}`);
     const out =
       role === "a"
         ? await runChain(body as ChainIn, (target, input) => postJson<StepOut>(`http://${target}:8080/advance`, input))

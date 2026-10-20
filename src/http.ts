@@ -4,6 +4,26 @@ import { Agent, request } from "undici";
 
 const agent = new Agent({ headersTimeout: 0, bodyTimeout: 0, connections: 512, keepAliveTimeout: 30_000 });
 
+export class HttpError extends Error {
+  readonly status: number;
+  constructor(method: string, url: string, status: number, body: string) {
+    super(`${method} ${url} answered ${status}: ${body.slice(0, 300)}`);
+    this.status = status;
+  }
+}
+
+export async function sendBytes(method: "GET" | "POST", url: string, body?: Uint8Array): Promise<Buffer> {
+  const res = await request(url, {
+    method,
+    body,
+    headers: body ? { "content-type": "application/json" } : {},
+    dispatcher: agent,
+  });
+  const bytes = Buffer.from(await res.body.arrayBuffer());
+  if (res.statusCode >= 300) throw new HttpError(method, url, res.statusCode, bytes.toString());
+  return bytes;
+}
+
 export async function postJson<T>(url: string, body: unknown, headers: Record<string, string> = {}): Promise<T> {
   const res = await request(url, {
     method: "POST",
@@ -12,7 +32,7 @@ export async function postJson<T>(url: string, body: unknown, headers: Record<st
     dispatcher: agent,
   });
   const text = await res.body.text();
-  if (res.statusCode >= 300) throw new Error(`POST ${url} answered ${res.statusCode}: ${text.slice(0, 300)}`);
+  if (res.statusCode >= 300) throw new HttpError("POST", url, res.statusCode, text);
   return JSON.parse(text) as T;
 }
 

@@ -1,5 +1,6 @@
 import { appendFile, mkdir } from "node:fs/promises";
 
+import type { ChainOut } from "../chain.ts";
 import { get, postJson } from "../http.ts";
 import { checksum } from "../probe/checksum.ts";
 import { expected, starts } from "../probe/collatz.ts";
@@ -14,6 +15,7 @@ const n = num("N", 3);
 const bits = num("BITS", 41);
 const k = num("K", 1);
 const timeoutMs = num("TIMEOUT_MS", 600_000);
+const staggerMs = num("STAGGER_MS", 0);
 const label = process.env.LABEL ?? "smoke";
 const stubUrl = process.env.STUB_URL ?? "http://stub:8080";
 const pgUrl = process.env.PG_URL;
@@ -44,8 +46,10 @@ const startedAt = Date.now();
 
 const settled = await Promise.allSettled(
   starts(seed, n, bits).map(async (v, i) => {
+    if (staggerMs > 0) await new Promise(resolve => setTimeout(resolve, i * staggerMs));
     const t0 = Date.now();
-    const out = await withTimeout(adapter.start({ wf: `${runId}-${i}`, i, v: v.toString(), k, t0 }), timeoutMs);
+    const wf = `${runId}-${i}`;
+    const out = await withTimeout(adapter.call<ChainOut>("chain", wf, { wf, i, v: v.toString(), k, t0 }), timeoutMs);
     return { ...out, latencyMs: Date.now() - t0 };
   }),
 );
@@ -80,7 +84,7 @@ const summary = {
   engine,
   label,
   runId,
-  params: { seed, n, bits, k },
+  params: { seed, n, bits, k, staggerMs },
   expected: { messages: exp.messages, calls: exp.calls, checksum: expSum },
   got: {
     completed,

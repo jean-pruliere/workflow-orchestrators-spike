@@ -1,8 +1,9 @@
 import { postJson } from "../../http.ts";
 
 const admin = process.env.RESTATE_ADMIN ?? "http://restate:9070";
+const targets = (process.env.TARGETS ?? "a b c").split(" ");
 
-for (const host of ["a", "b", "c"]) {
+for (const host of targets) {
   for (let attempt = 1; ; attempt++) {
     try {
       await postJson(`${admin}/deployments`, { uri: `http://${host}:9080`, force: true });

@@ -10,6 +10,8 @@ const n = Number(process.env.N ?? 10);
 const k = Number(process.env.K ?? 1);
 const atS = Number(process.env.AT_S ?? 10);
 const timeoutMs = Number(process.env.TIMEOUT_MS ?? 300_000);
+// Chains started together move in lockstep, so a fault on B would hit either every chain or none.
+const staggerMs = Number(process.env.STAGGER_MS ?? 137);
 
 const project = `wos-${engine}`;
 const file = `compose/${engine}.yml`;
@@ -79,7 +81,12 @@ if (check) process.exit(0);
 
 const driver = spawn(
   "docker",
-  ["compose", "-f", file, "run", "--rm", "-e", `N=${n}`, "-e", `K=${k}`, "-e", `TIMEOUT_MS=${timeoutMs}`, "-e", `LABEL=fault:${faultName}`, "driver"],
+  [
+    "compose", "-f", file, "run", "--rm",
+    "-e", `N=${n}`, "-e", `K=${k}`, "-e", `TIMEOUT_MS=${timeoutMs}`, "-e", `STAGGER_MS=${staggerMs}`,
+    "-e", `LABEL=fault:${faultName}`,
+    "driver",
+  ],
   { stdio: ["ignore", "pipe", "ignore"] },
 );
 let stdout = "";
@@ -121,7 +128,7 @@ const record = {
   at: new Date().toISOString(),
   engine,
   fault: faultName,
-  params: { n, k, atS, outageS: fault.outageS, timeoutMs, stepDelayMs: Number(process.env.STEP_DELAY_MS ?? 0) },
+  params: { n, k, atS, outageS: fault.outageS, timeoutMs, staggerMs, stepDelayMs: Number(process.env.STEP_DELAY_MS ?? 0) },
   timeline,
   driverExit: exitCode,
   completed: summary?.got.completed ?? null,
