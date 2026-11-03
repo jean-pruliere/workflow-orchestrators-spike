@@ -2,7 +2,73 @@
 
 Is Temporal the right engine for a process that spans several services, compared with Restate and DBOS, and
 do we need an engine at all? This repository holds the harness and its raw results. The rule they were
-judged against was written before the first run.
+judged against, written before the first run, and the verdict it gave come first.
+
+## Rule
+
+Written on 2026-10-19, before the first run. The scenarios and faults it names were fixed the same day, before
+any of them ran: only two Temporal runs had checked that the fault runner works.
+
+Temporal, the incumbent, stays unless a contender meets all four conditions:
+
+1. **It passes every gate.** It can be self-hosted with no mandatory SaaS, a step runs in the process of the
+   service that owns it, what it stores can be encrypted with our own keys, and its licence allows internal use.
+2. **It passes every must-pass scenario.** A business error raised in C reaches A with a type A can branch on
+   (`typedError`). A failure in C undoes B's and A's work in reverse order (`saga`). A 30 s timer survives a
+   restart of A (`timer`). Retries and a timeout are set and enforced per step (`retry`). A changed workflow
+   deploys while runs are in flight, and old and new runs both finish (`versioned`). What the engine stores is
+   ciphertext (`sealed`).
+3. **It is no worse than Temporal on durability.** Under every fault, every chain finishes with the right
+   checksum within 5 minutes of its start, without a human. A side effect that runs twice is recorded, not
+   failed, as long as the engine's documentation says it can happen.
+4. **It is clearly better on at least one of:** fewer stateful components to run; at least 30% lower CPU,
+   memory and database writes per step at 50 steps/s; recovering from a fault on its own where Temporal needs a
+   human.
+
+Cost comparisons start with 3 paired runs and add pairs, up to 8, until the 95% interval sits on one side of the
+threshold. If it still doesn't, the result is inconclusive.
+
+## Verdict: keep Temporal
+
+Reached on 2026-10-20. No contender meets conditions 1 to 3, so condition 4 is never checked.
+
+| Engine | Where it stops |
+| --- | --- |
+| Trigger.dev 4.7.4 | Condition 1, checked on paper: its tasks run only in containers it starts itself, and nothing lets it encrypt what it stores. |
+| Hatchet 0.110.8 | Condition 1, checked on paper: nothing lets it encrypt payloads, which it stores as plain JSON in Postgres. Encrypting each input by hand in every step doesn't count. |
+| DBOS 5.3.0 | Condition 3: a replaced container's runs are never picked up again, 6 chains of 10 lost on `replace-b` and all 10 on `replace-a`. Recovering them takes DBOS Conductor, which is proprietary and checks its licence online at startup, so it fails condition 1. `restart-b-same-id` recovers everything, but DBOS's deployment guide never describes a stable id per replica. |
+| Restate 1.8.0 | Condition 2: its codec doesn't cover failures, so error messages and their metadata stay in plaintext; in `sealed`, that is the test error's account id. The codec API is marked `@experimental`. It passes every fault. |
+| Temporal 1.32.1 | Passes every gate, scenario and fault. |
+
+The baselines don't have to pass the gates. `naive` lost 7 chains of 10 on `replace-b`: a task in `Processing`
+when its process dies stays there for good. `none` lost every chain whenever a service was killed or restarted,
+which shows the fault runs do see lost work.
+
+**One reading decides Restate.** Encryption is read strictly: the engine has to guarantee it, rather than every
+caller keeping business data out of error messages. The same reading rules out hand-rolled encryption for
+Hatchet. Read leniently, Restate passes conditions 1 to 3, and condition 4 then turns on a second reading: as
+CPU, memory and database writes together it fails, because Restate's memory was not 30% lower; as CPU alone it
+passes.
+
+For context, at 50 steps/s Restate used about a fifth of Temporal's CPU per step, and DBOS about a third.
+
+**What would reopen it:** Restate's codec covering failures and leaving `@experimental`, or DBOS recovering a
+replaced container's runs without Conductor. Re-running the harness against new versions takes a few hours.
+
+### Reading the results
+
+- `results/faults.jsonl` keeps every run. The verdict rests on the campaign that starts on 2026-10-20 at 03:11
+  UTC, whose lines carry `staggerMs`. The one before it was redone for two reasons. The host slept from
+  2026-10-19 15:49 UTC, which voids every `naive` and `none` run after that time. And chains that started
+  together moved in lockstep, so a fault on B hit every chain or none: that is how `naive` passed `replace-b`
+  on 2026-10-20 at 01:25.
+- Restate's `kill-engine` on 2026-10-19 at 15:26 lost all 10 because the driver didn't re-attach to its runs
+  when the server dropped the connection; the runs themselves survived. Temporal, Restate and DBOS pass and fail
+  the same faults in both campaigns, Restate's `kill-engine` once the driver re-attached.
+- In `results/scenarios.jsonl`, `versioned` with variant `unversioned` or `in-place` is a control: without each
+  engine's versioning mechanism, runs in flight get stuck, on all three engines.
+- `sealed` prints its scan of the store to the terminal rather than recording it. To see where the marker lands,
+  run `scripts/scenario.sh <engine> sealed default`, then `encrypted`.
 
 ## What runs
 
